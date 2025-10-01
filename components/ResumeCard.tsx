@@ -1,0 +1,45 @@
+import React from "react";
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import ScoreCircle from "./ScoreCircle";
+import Image from "next/image";
+
+const ResumeCard = ({
+  id,
+  jobTitle,
+  companyName,
+  ATS,
+  imagePath,
+}: ResumeCardProps) => {
+  return (
+    <Card className="w-full h-100 max-w-sm bg-amber-50 shadow-lg rounded-3xl">
+      <CardHeader className="flex justify-between items-center">
+        <div>
+          <CardTitle className="text-lg font-bold">{jobTitle}</CardTitle>
+          <CardDescription className="text-md italic">
+            {companyName}
+          </CardDescription>
+        </div>
+        <ScoreCircle score={ATS} />
+      </CardHeader>
+      <CardContent className="overflow-hidden">
+        <Image
+          src={imagePath}
+          alt={`${jobTitle} at ${companyName}`}
+          width={400}
+          height={100}
+          className="rounded-xl"
+        />
+      </CardContent>
+    </Card>
+  );
+};
+
+export default ResumeCard;

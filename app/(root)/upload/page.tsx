@@ -7,7 +7,7 @@ const page = () => {
         <h1 className="text-4xl sm:text-5xl font-extrabold text-center sm:text-left">
           Welcome to <span className="text-gray-300">Resume analyzer app</span>
         </h1>
-        <p> This is the Resume page</p>
+        <p> This is the Upload page</p>
       </main>
     </div>
   );

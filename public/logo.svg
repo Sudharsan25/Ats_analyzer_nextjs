@@ -1,0 +1,13 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M40 70H160C165.523 70 170 74.4772 170 80V120C170 125.523 165.523 130 160 130H40C34.4772 130 30 125.523 30 120V80C30 74.4772 34.4772 70 40 70Z" fill="transparent" stroke="#FFFFFF" stroke-width="5"/>
+
+    <text x="100" y="94" font-family="Arial, sans-serif" font-size="28" font-weight="bold" fill="#FFFFFF" text-anchor="middle">ATS</text>
+
+    <path d="M60 115L80 100L100 115L120 100L140 115" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <circle cx="60" cy="115" r="4" fill="#FFFFFF"/>
+    <circle cx="80" cy="100" r="4" fill="#FFFFFF"/>
+    <circle cx="100" cy="115" r="4" fill="#FFFFFF"/>
+    <circle cx="120" cy="100" r="4" fill="#FFFFFF"/>
+    <circle cx="140" cy="115" r="4" fill="#FFFFFF"/>
+</svg>
