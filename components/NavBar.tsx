@@ -1,6 +1,5 @@
 "use client";
 
-import { FileUp, NotebookText, User } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 import {
@@ -13,6 +12,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { authClient } from "@/lib/auth-client";
+import { toast } from "sonner";
+import { User } from "lucide-react";
 
 const NavBar = () => {
   const router = useRouter();
@@ -22,8 +24,13 @@ const NavBar = () => {
   };
 
   const handleSignOut = () => {
-    console.log("Sign out clicked!!");
-    router.push("/sign-in");
+    const result = authClient.signOut();
+    if (!result) {
+      toast.error("Error signing out. Please try again.");
+    } else {
+      toast.success("Signed out successfully!");
+      router.push("/sign-in");
+    }
   };
 
   return (
