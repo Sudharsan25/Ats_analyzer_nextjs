@@ -1,16 +1,21 @@
 import React from "react";
 import {
   Card,
-  CardAction,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import ScoreCircle from "./ScoreCircle";
 import Image from "next/image";
 
+interface ResumeCardProps {
+  id: string;
+  jobTitle: string;
+  companyName: string;
+  ATS: number;
+  imagePath: string;
+}
 const ResumeCard = ({
   id,
   jobTitle,
