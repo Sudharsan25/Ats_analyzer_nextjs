@@ -120,3 +120,6 @@
     @apply bg-[url("/images/bg-main.svg")] bg-cover text-foreground overflow-y-scroll overflow-x-hidden;
   }
 }
+
+@layer components {
+}

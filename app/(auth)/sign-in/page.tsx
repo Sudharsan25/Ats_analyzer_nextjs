@@ -1,14 +1,12 @@
+import { LoginForm } from "@/components/login-form";
 import React from "react";
 
 const page = () => {
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <h1 className="text-4xl sm:text-5xl font-extrabold text-center sm:text-left">
-          Welcome to <span className="text-gray-300">Resume analyzer app</span>
-        </h1>
-        <p> This is the SignIn page</p>
-      </main>
+    <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
+      <div className="w-full max-w-sm">
+        <LoginForm />
+      </div>
     </div>
   );
 };

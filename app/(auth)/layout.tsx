@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
+import { getSession } from "@/lib/auth-client";
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,17 +22,17 @@ export const metadata: Metadata = {
     "Calculate ATS score for your resume with respect to specific job descriptions",
 };
 
-export default function AuthLayout({
+export default async function AuthLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        {children}
-      </body>
-    </html>
-  );
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  // 2. If no session, redirect to the login page.
+  if (session) {
+    redirect("/");
+  }
+  return <>{children}</>;
 }
