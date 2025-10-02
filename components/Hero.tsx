@@ -1,4 +1,4 @@
-import page from "@/app/(root)/resume/page";
+import page from "@/app/(root)/resume/[id]/page";
 import Link from "next/link";
 import React from "react";
 
