@@ -3,7 +3,7 @@ import dbConnect from "@/lib/dbConnect";
 import Resume from "@/database/resumes";
 import { auth } from "@/lib/auth";
 
-type tParams = Promise<{ id: string[] }>;
+type tParams = Promise<{ id: string }>;
 
 export async function GET(request: Request, { params }: { params: tParams }) {
   await dbConnect();
