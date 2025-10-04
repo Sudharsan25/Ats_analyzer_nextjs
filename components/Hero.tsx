@@ -22,7 +22,7 @@ const Hero = ({ pageType }: PageType) => {
         <Link
           href="/upload"
           className="border-4 border-white rounded-2xl p-4 cursor-pointer text-2xl font-semibold text-center">
-          Upload your resume now
+          Analyze New Resume
         </Link>
       ) : (
         <div></div>

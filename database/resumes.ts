@@ -6,7 +6,6 @@ mongoose.connect(process.env.DATABASE_URL!);
 mongoose.Promise = global.Promise;
 
 export interface IResume extends Document {
-  id: string;
   userId: string;
   jobTitle: string;
   companyName: string;
@@ -20,7 +19,6 @@ export interface IResume extends Document {
 
 const ResumeSchema = new Schema(
   {
-    id: String,
     userId: String,
     jobTitle: String,
     companyName: String,

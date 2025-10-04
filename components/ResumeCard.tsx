@@ -3,11 +3,14 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import ScoreCircle from "./ScoreCircle";
 import Image from "next/image";
+import { Button } from "./ui/button";
+import { redirect } from "next/navigation";
 
 interface ResumeCardProps {
   id: string;
@@ -32,7 +35,7 @@ const ResumeCard = ({
             {companyName}
           </CardDescription>
         </div>
-        <ScoreCircle score={ATS} />
+        <ScoreCircle score={ATS * 10} />
       </CardHeader>
       <CardContent className="overflow-hidden">
         <Image
@@ -43,6 +46,13 @@ const ResumeCard = ({
           className="rounded-xl"
         />
       </CardContent>
+      <CardFooter>
+        <Button
+          className="w-full text-md font-semibold"
+          onClick={() => redirect(`/resume/${id}`)}>
+          View Details
+        </Button>
+      </CardFooter>
     </Card>
   );
 };

@@ -1,6 +1,7 @@
 import { generateText } from "ai";
 import { NextResponse } from "next/server";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
+import { auth } from "@/lib/auth";
 
 const google = createGoogleGenerativeAI({
   apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY!,
@@ -8,14 +9,22 @@ const google = createGoogleGenerativeAI({
 
 export async function POST(request: Request) {
   try {
-    const { jobDescription, imagePath } = await request.json();
+    const session = await auth.api.getSession({
+      headers: request.headers,
+    });
+
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { jobDescription, resumePath } = await request.json();
 
     // Step 1 & 2: Fetch the file and get its buffer
-    const response = await fetch(imagePath);
+    const response = await fetch(resumePath);
     const fileBuffer = await response.arrayBuffer();
     // Step 3 & 4: Construct the prompt correctly and call the AI model
     const result = await generateText({
-      model: google("gemini-2.5-flash"), // Or your preferred model
+      model: google("gemini-2.5-pro"), // Or your preferred model
       messages: [
         {
           role: "user", // TypeScript will correctly infer this as a literal type
@@ -65,6 +74,9 @@ export async function POST(request: Request) {
                     explanation: string;
                     }[];
                 };
+
+               IMPORTANT: The final output must be ONLY the raw, valid JSON object of the provided format for feedback and nothing else.
+               Do not include any markdown formatting like \`\`\`json, explanations, or conversational text.
                `,
             },
             {

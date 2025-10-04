@@ -18,8 +18,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "next/navigation";
-import { generateUUID } from "@/lib/utils";
 import { PutBlobResult } from "@vercel/blob";
+import { toast } from "sonner";
+
+// Imports for the new spinner component
+import { Item, ItemContent, ItemMedia, ItemTitle } from "@/components/ui/item";
+import { Spinner } from "@/components/ui/spinner";
 
 const formSchema = z.object({
   jobTitle: z.string().min(2, "Job title must be at least 2 characters long"),
@@ -31,14 +35,12 @@ const formSchema = z.object({
     .min(10, "Job description must be at least 10 characters long"),
 });
 
-interface ResumeUploadProps {
-  userId: string;
-}
-
-const ResumeUploadForm = ({ userId }: ResumeUploadProps) => {
+const ResumeUploadForm = () => {
   const [file, setFile] = useState<File | null>(null);
-
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  // New state to track the AI analysis phase
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -49,57 +51,62 @@ const ResumeUploadForm = ({ userId }: ResumeUploadProps) => {
     },
   });
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    // 1. Pre-condition check: Ensure a file is selected.
     if (!file) {
-      alert("Please select a resume file to upload.");
+      toast.error("Please select a resume file to upload.");
       return;
     }
 
     setIsSubmitting(true);
-
+    console.log("Submitting form with values:", values);
     try {
+      // Step 1: Upload the file to Vercel Blob
       const response = await fetch(`/api/upload?filename=${file.name}`, {
         method: "POST",
         body: file,
       });
-
       const newBlob = (await response.json()) as PutBlobResult;
 
-      console.log("File uploaded successfully to:", newBlob.url);
-      // 3. Construct your data object with the REAL URL from the upload result.
       const data = {
-        id: generateUUID(),
-        userId: userId,
         jobTitle: values.jobTitle,
         companyName: values.companyName,
         jobDescription: values.jobDescription,
-        resumePath: newBlob.url, // Use the public URL returned from Vercel Blob
-        imagePath: "", // Image form to be handled later
+        resumePath: newBlob.url,
+        imagePath: "/images/resume1.png",
         feedback: null,
       };
 
-      // 4. Send this metadata to your own backend API.
-      await fetch("/api/resumes", {
+      console.log("Data created for DB entry:", data);
+      // Step 2: Create the resume record in the database
+      const createResponse = await fetch("/api/resumes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
 
-      console.log("Successfully sent metadata to /api/resumes:", data);
+      if (!createResponse.ok) {
+        throw new Error("Failed to create resume record.");
+      }
+      const newResume = await createResponse.json();
+      const newResumeId = newResume._id; // Using the transformed 'id'
 
-      handleAnalyze(data.jobDescription, data.resumePath, data.id);
+      console.log("New resume created with ID:", newResumeId);
+      // Step 3: Switch from "submitting" to "analyzing" state
+      setIsSubmitting(false);
+      setIsAnalyzing(true);
 
-      // 5. Redirect on complete success.
+      // Step 4: Trigger the AI analysis and final DB update
+      await handleAnalyze(data.jobDescription, data.resumePath, newResumeId);
+
+      toast.success("Your resume has been uploaded and analyzed successfully!");
       router.push("/");
     } catch (error) {
-      // Handle any errors that occur during the upload or the subsequent fetch.
       console.error("An error occurred during the submission process:", error);
-      alert("Something went wrong. Please try again.");
+      toast.error("The submission process failed. Please try again.");
     } finally {
+      // Ensure all loading states are reset
       setIsSubmitting(false);
+      setIsAnalyzing(false);
     }
   }
 
@@ -108,70 +115,63 @@ const ResumeUploadForm = ({ userId }: ResumeUploadProps) => {
     resumePath: string,
     id: string
   ) => {
-    console.log("Analysis start for:", resumePath);
-    const response = await fetch("/api/generateFeedback", {
+    console.log("Starting AI analysis for resume ID:", id);
+    // This function's internal logic remains the same
+    const feedbackResponse = await fetch("/api/generateFeedback", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ jobDescription, resumePath }),
     });
 
-    if (!response.ok) {
-      // Handle potential HTTP errors
-      throw new Error(`API request failed with status ${response.status}`);
+    if (!feedbackResponse.ok) {
+      throw new Error(
+        `AI feedback API failed with status ${feedbackResponse.status}`
+      );
     }
 
-    const data = await response.json();
+    const aiData = await feedbackResponse.json();
+    const feedbackObject = aiData.feedback;
 
-    console.log("Feedback generation complete:", id, data);
-    // Update resume API route to accept feedback and store it
+    const updateResponse = await fetch(`/api/resumes/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ feedback: feedbackObject }),
+    });
+
+    if (!updateResponse.ok) {
+      throw new Error(
+        `Failed to update resume in DB. Status: ${updateResponse.status}`
+      );
+    }
   };
-
-  //   const handleAnalyze = async (
-  //   jobDescription: string,
-  //   imagePath: string,
-  //   id: string
-  // ) => {
-  //   console.log("Analysis start for:", imagePath);
-
-  //   // This function will now throw an error on failure,
-  //   // which will be caught by the onSubmit function's catch block.
-  //   const response = await fetch("/api/generateFeedback", {
-  //     method: "POST",
-  //     headers: { "Content-Type": "application/json" },
-  //     body: JSON.stringify({ jobDescription, imagePath }),
-  //   });
-
-  //   if (!response.ok) {
-  //     throw new Error(`AI feedback API failed with status ${response.status}`);
-  //   }
-
-  //   const feedbackData = await response.json();
-  //   console.log("Feedback generation complete:", feedbackData);
-
-  //   // NEW: Call the update API route with the ID and the received feedback
-  //   const updateResponse = await fetch("/api/updateResume", {
-  //     method: "PATCH",
-  //     headers: { "Content-Type": "application/json" },
-  //     body: JSON.stringify({ id: id, feedback: feedbackData.feedback }),
-  //   });
-
-  //   if (!updateResponse.ok) {
-  //     throw new Error(`Failed to update resume in DB with status ${updateResponse.status}`);
-  //   }
-
-  //   console.log("Successfully stored feedback for resume ID:", id);
-  // };
 
   const handleFileSelect = (fileSelected: File | null) => {
     setFile(fileSelected);
-    console.log("File selected:", file);
   };
+
+  // Conditionally render the spinner when analysis is in progress
+  if (isAnalyzing) {
+    return (
+      <div className="flex w-full min-h-screen flex-col items-center justify-center gap-4 [--radius:1rem]">
+        <Item variant="muted">
+          <ItemMedia>
+            <Spinner />
+          </ItemMedia>
+          <ItemContent>
+            <ItemTitle className="line-clamp-1 text-white">
+              Performing AI analysis...
+            </ItemTitle>
+          </ItemContent>
+        </Item>
+      </div>
+    );
+  }
 
   return (
     <div className="font-sans items-center justify-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
       <main className="flex flex-col gap-[32px] row-start-2 items-center justify-center">
         <Hero pageType="upload" />
-        <div className="w-230">
+        <div className="w-full max-w-2xl">
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
@@ -219,8 +219,11 @@ const ResumeUploadForm = ({ userId }: ResumeUploadProps) => {
                 )}
               />
               <FileUploader onFileSelect={handleFileSelect} />
-              <Button type="submit" className="w-full text-md font-semibold">
-                {isSubmitting ? "Uploading file..." : "Upload Resume"}
+              <Button
+                type="submit"
+                className="w-full text-md font-semibold"
+                disabled={isSubmitting}>
+                {isSubmitting ? "Uploading..." : "Analyze Resume"}
               </Button>
             </form>
           </Form>
