@@ -24,7 +24,7 @@ export async function POST(request: Request) {
     const fileBuffer = await response.arrayBuffer();
     // Step 3 & 4: Construct the prompt correctly and call the AI model
     const result = await generateText({
-      model: google("gemini-2.5-pro"), // Or your preferred model
+      model: google("gemini-2.5-flash"), // Or your preferred model
       messages: [
         {
           role: "user", // TypeScript will correctly infer this as a literal type

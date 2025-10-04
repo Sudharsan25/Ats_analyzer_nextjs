@@ -3,10 +3,9 @@ import dbConnect from "@/lib/dbConnect";
 import Resume from "@/database/resumes";
 import { auth } from "@/lib/auth";
 
-export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+type tParams = Promise<{ id: string[] }>;
+
+export async function GET(request: Request, { params }: { params: tParams }) {
   await dbConnect();
 
   try {
@@ -38,10 +37,7 @@ export async function GET(
   }
 }
 
-export async function PATCH(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function PATCH(request: Request, { params }: { params: tParams }) {
   await dbConnect();
 
   try {
@@ -81,7 +77,7 @@ export async function PATCH(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: tParams }
 ) {
   await dbConnect();
   try {
