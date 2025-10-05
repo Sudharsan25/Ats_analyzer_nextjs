@@ -18,7 +18,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "next/navigation";
-import { PutBlobResult } from "@vercel/blob";
 import { toast } from "sonner";
 
 // Imports for the new spinner component
@@ -60,19 +59,39 @@ const ResumeUploadForm = () => {
     setIsSubmitting(true);
     console.log("Submitting form with values:", values);
     try {
-      // Step 1: Upload the file to Vercel Blob
-      const response = await fetch(`/api/upload?filename=${file.name}`, {
-        method: "POST",
-        body: file,
-      });
-      const newBlob = (await response.json()) as PutBlobResult;
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append(
+        "upload_preset",
+        process.env.NEXT_PUBLIC_CLODUINARY_UPLOAD_PRESET!
+      );
 
+      // 2. Upload the file directly to Cloudinary
+      const cloudinaryResponse = await fetch(
+        `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/upload`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      if (!cloudinaryResponse.ok) {
+        throw new Error("Failed to upload file to Cloudinary.");
+      }
+
+      const cloudinaryData = await cloudinaryResponse.json();
+      const resumePath = cloudinaryData.secure_url; // The URL of the uploaded PDF
+
+      // 3. Automatically generate the image URL by changing the file extension
+      const imagePath = resumePath.replace(/\.pdf$/, ".jpg");
+
+      console.log("File uploaded to Cloudinary:", { resumePath, imagePath });
       const data = {
         jobTitle: values.jobTitle,
         companyName: values.companyName,
         jobDescription: values.jobDescription,
-        resumePath: newBlob.url,
-        imagePath: "/images/resume1.png",
+        resumePath: resumePath,
+        imagePath: imagePath,
         feedback: null,
       };
 
@@ -171,17 +190,17 @@ const ResumeUploadForm = () => {
     <div className="font-sans items-center justify-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
       <main className="flex flex-col gap-[32px] row-start-2 items-center justify-center">
         <Hero pageType="upload" />
-        <div className="w-full max-w-2xl">
+        <div className="w-224">
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
-              className="space-y-8 text-white">
+              className="space-y-8 text-white ">
               <FormField
                 control={form.control}
                 name="jobTitle"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Job Title</FormLabel>
+                    <FormLabel className="text-lg">Job Title</FormLabel>
                     <FormControl>
                       <Input placeholder="Enter the job title" {...field} />
                     </FormControl>
@@ -194,7 +213,7 @@ const ResumeUploadForm = () => {
                 name="companyName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Company Name</FormLabel>
+                    <FormLabel className="text-lg">Company Name</FormLabel>
                     <FormControl>
                       <Input placeholder="Enter the company name" {...field} />
                     </FormControl>
@@ -207,7 +226,7 @@ const ResumeUploadForm = () => {
                 name="jobDescription"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Job Description</FormLabel>
+                    <FormLabel className="text-lg">Job Description</FormLabel>
                     <FormControl>
                       <Textarea
                         placeholder="Copy and paste the job description"
