@@ -33,7 +33,7 @@ export async function POST(request: Request) {
               type: "text",
               text: `Based on the job description and the attached resume, generate feedback to help improve the resume for better alignment.
                Job Description: ${jobDescription}.
-               Provide feedback in the following format:
+               Provide feedback in the following format: (All scored are out of 100)
                 overallScore: number;
                 ATS: {
                     score: number;
