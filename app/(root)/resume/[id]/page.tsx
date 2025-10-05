@@ -4,11 +4,20 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation"; // 2. Import hook to get URL parameters.
 import { IResume } from "@/database/resumes";
+import { Feedback } from "@/types";
+import Image from "next/image";
+import Link from "next/link";
+import Summary from "@/components/Summary";
+import ATS from "@/components/ATS";
+import Details from "@/components/Details";
 // 3. Import your shared Mongoose interface for type safety.
 
 export default function ResumeDetailPage() {
   // 4. State variables to manage the component's lifecycle.
   const [resume, setResume] = useState<IResume | null>(null);
+  const [imageUrl, setImageUrl] = useState("");
+  const [resumeUrl, setResumeUrl] = useState("");
+  const [feedback, setFeedback] = useState<Feedback | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -36,6 +45,9 @@ export default function ResumeDetailPage() {
         const data = (await response.json()) as IResume;
         console.log("Fetched resume data:", data);
         setResume(data);
+        setImageUrl(data.imagePath || "");
+        setResumeUrl(data.resumePath || "");
+        setFeedback(data.feedback || null);
       } catch (error) {
         setError(error instanceof Error ? error.message : String(error));
       } finally {
@@ -52,28 +64,61 @@ export default function ResumeDetailPage() {
   }
 
   if (error) {
-    return <div className="text-red-500 text-center p-20">Error: {error}</div>;
+    return (
+      <div className="text-red-500 text-2xl font-extrabold text-center p-20">
+        Error: {error}
+      </div>
+    );
   }
 
   if (!resume) {
-    return <div className="text-white text-center p-20">Resume not found.</div>;
+    return (
+      <div className="text-white  text-2xl font-extrabold  text-center p-20">
+        Resume not found.
+      </div>
+    );
   }
 
-  // 9. Render the final UI with the fetched data.
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 text-white">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start w-full max-w-4xl">
-        <h1 className="text-4xl sm:text-5xl font-extrabold text-center sm:text-left">
-          Analysis for <span className="text-gray-300">{resume.jobTitle}</span>
-        </h1>
-
-        <div className="w-full bg-gray-800 p-6 rounded-lg shadow-md">
-          <h2 className="text-2xl font-bold mb-4">Feedback Details</h2>
-          <pre className="bg-gray-900 p-4 rounded-md whitespace-pre-wrap text-sm">
-            {JSON.stringify(resume.feedback, null, 2)}
-          </pre>
-        </div>
-      </main>
-    </div>
+    <main className="!pt-0">
+      <div className="flex flex-row w-full max-lg:flex-col-reverse">
+        <section className="feedback-section bg-[url('/images/bg-small.svg') bg-cover h-[100vh] sticky top-0 items-center justify-center">
+          {imageUrl && resumeUrl && (
+            <div className="animate-in fade-in duration-1000 gradient-border max-sm:m-0 h-[90%] max-wxl:h-fit w-fit relative">
+              <a href={resumeUrl} target="_blank" rel="noopener noreferrer">
+                <Image
+                  src={imageUrl}
+                  className="w-full h-full object-contain rounded-2xl"
+                  width={1265}
+                  height={1620}
+                  alt="Resume Image"
+                />
+              </a>
+            </div>
+          )}
+        </section>
+        <section className="feedback-section">
+          <h2 className="text-4xl !text-white font-bold">Resume Review</h2>
+          {feedback ? (
+            <div className="text-gray-600 flex flex-col gap-8 animate-in fade-in duration-1000">
+              <Summary feedback={feedback} />
+              <ATS
+                score={feedback.ATS.score || 0}
+                suggestions={feedback.ATS.tips || []}
+              />
+              <Details feedback={feedback} />
+            </div>
+          ) : (
+            <Image
+              alt="resume scan"
+              src="/images/resume-scan-2.gif"
+              className="w-full"
+              width={25}
+              height={25}
+            />
+          )}
+        </section>
+      </div>
+    </main>
   );
 }

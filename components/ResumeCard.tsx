@@ -35,7 +35,7 @@ const ResumeCard = ({
             {companyName}
           </CardDescription>
         </div>
-        <ScoreCircle score={ATS * 10} />
+        <ScoreCircle score={ATS} />
       </CardHeader>
       <CardContent className="overflow-hidden">
         <Image

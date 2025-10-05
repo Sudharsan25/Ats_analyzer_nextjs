@@ -36,7 +36,7 @@ const NavBar = () => {
     try {
       // 2. Call your API route using the DELETE method.
       //    This assumes your DELETE handler is in `app/api/resumes/route.ts`.
-      const response = await fetch("/api/resumes", {
+      const response = await fetch("/api/resumes/user", {
         method: "DELETE",
       });
 
@@ -70,8 +70,8 @@ const NavBar = () => {
       toast.error("Error signing out. Please try again.");
     } else {
       toast.success("Signed out successfully!");
-      router.push("/sign-in");
     }
+    router.push("/sign-in");
   };
 
   return (
