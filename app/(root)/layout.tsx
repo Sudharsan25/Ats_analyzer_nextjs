@@ -36,10 +36,9 @@ export default async function HomeLayout({
     redirect("/sign-in");
   }
   return (
-    <>
+    <div className="flex flex-col min-h-screen font-sans">
       <NavBar />
       <div>{children}</div>
-      <Toaster />
-    </>
+    </div>
   );
 }

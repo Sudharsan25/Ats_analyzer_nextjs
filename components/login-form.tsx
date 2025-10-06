@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -20,6 +20,7 @@ import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { signIn } from "@/actions/auth-actions";
+import Image from "next/image";
 
 const formSchema = z.object({
   email: z.email(),
@@ -45,18 +46,27 @@ export function LoginForm({
     setloading(true);
     const { success, message } = await signIn(values.email, values.password);
 
+    console.log(success, message);
+
     if (success == true) {
       toast.success(message);
       router.push("/");
     } else {
-      toast.error(message);
+      toast(message);
     }
 
     setloading(false);
   }
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card className="rounded-2xl">
+      <Card className="rounded-2xl bg-gray-100">
+        <CardHeader className="flex flex-col items-center justify-center rounded-t-2xl">
+          <Image src="/auth-logo.svg" alt="Logo" width={120} height={100} />
+          <h2 className="text-2xl font-bold mt-2">Resume Analyzer</h2>
+          <p className="text-sm text-gray-500">
+            Log in to your account to continue
+          </p>
+        </CardHeader>
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">

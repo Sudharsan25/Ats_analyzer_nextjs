@@ -60,21 +60,31 @@ export default function ResumeDetailPage() {
 
   // 8. Render UI based on the current state (loading, error, or success).
   if (isLoading) {
-    return <div className="text-white text-center p-20">Loading...</div>;
+    return (
+      <div className="p-20">
+        <p className="text-white text-lg font-semibold text-center">
+          Loading resumes...{" "}
+        </p>
+      </div>
+    );
   }
 
   if (error) {
     return (
-      <div className="text-red-500 text-2xl font-extrabold text-center p-20">
-        Error: {error}
+      <div className="p-20">
+        <p className="text-red-500 text-2xl font-extrabold text-center">
+          Error: {error}
+        </p>
       </div>
     );
   }
 
   if (!resume) {
     return (
-      <div className="text-white  text-2xl font-extrabold  text-center p-20">
-        Resume not found.
+      <div className="p-20">
+        <p className="text-red-500 text-2xl font-extrabold text-center">
+          Resume data not available. Please check back later.
+        </p>
       </div>
     );
   }

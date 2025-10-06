@@ -4,6 +4,7 @@ import Hero from "@/components/Hero";
 import ResumeCard from "@/components/ResumeCard";
 import { IResume } from "@/database/resumes"; // Import the Mongoose interface
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export default function Home() {
   // State for storing the fetched resumes
@@ -34,9 +35,11 @@ export default function Home() {
 
         if (result.success) {
           setResumes(result.data);
+        } else {
+          toast.error("Failed to load resumes. Please try again.");
         }
       } catch (error) {
-        console.error(error);
+        toast.error(error as string);
         // Here you could set an error state and show a toast
       } finally {
         setIsLoading(false);
@@ -52,7 +55,9 @@ export default function Home() {
       <div className="font-sans items-center justify-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
         <main className="flex flex-col gap-[32px] row-start-2 items-center justify-center">
           <Hero pageType="home" />
-          Loading resumes...
+          <p className="text-white text-lg font-semibold text-center">
+            Loading resumes...{" "}
+          </p>
         </main>
       </div>
     ); // Replace with Skeleton Loaders for better UX
@@ -63,7 +68,7 @@ export default function Home() {
       <main className="flex flex-col gap-[32px] row-start-2 items-center justify-center">
         <Hero pageType="home" />
         {resumes.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-10 ml-48 w-full">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full">
             {resumes.map((resume) => (
               <ResumeCard
                 key={String(resume._id)} // Use the unique ID from the database
@@ -77,7 +82,7 @@ export default function Home() {
           </div>
         ) : (
           // Empty State: What to show when there are no resumes
-          <div className="text-center">
+          <div className="flex flex-col items-center justify-center text-center gap-2">
             <h2 className="text-2xl font-semibold">
               No Resumes analysis Found
             </h2>

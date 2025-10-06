@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -21,6 +21,7 @@ import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { signUp } from "@/actions/auth-actions";
+import Image from "next/image";
 
 const formSchema = z.object({
   username: z.string().min(3),
@@ -64,6 +65,13 @@ export function SignUpForm({
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="rounded-2xl">
+        <CardHeader className="flex flex-col items-center justify-center rounded-t-2xl">
+          <Image src="/auth-logo.svg" alt="Logo" width={120} height={100} />
+          <h2 className="text-2xl font-bold mt-2">Resume Analyzer</h2>
+          <p className="text-sm text-gray-500">
+            Create a new account to get started!
+          </p>
+        </CardHeader>
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">

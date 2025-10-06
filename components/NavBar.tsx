@@ -70,8 +70,8 @@ const NavBar = () => {
       toast.error("Error signing out. Please try again.");
     } else {
       toast.success("Signed out successfully!");
+      router.push("/sign-in");
     }
-    router.push("/sign-in");
   };
 
   return (

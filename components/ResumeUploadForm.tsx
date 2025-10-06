@@ -190,7 +190,7 @@ const ResumeUploadForm = () => {
     <div className="font-sans items-center justify-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
       <main className="flex flex-col gap-[32px] row-start-2 items-center justify-center">
         <Hero pageType="upload" />
-        <div className="w-224">
+        <div className="sm:w-auto md:w-96 lg:w-1/2 xl:w-2/5 2xl:w-1/3">
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}

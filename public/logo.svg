@@ -1,5 +1,5 @@
-<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M40 70H160C165.523 70 170 74.4772 170 80V120C170 125.523 165.523 130 160 130H40C34.4772 130 30 125.523 30 120V80C30 74.4772 34.4772 70 40 70Z" fill="transparent" stroke="#FFFFFF" stroke-width="5"/>
+<svg width="200" height="150" viewBox="0 0 200 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M40 60H160C165.523 60 170 64.4772 170 70V130C170 135.523 165.523 140 160 140H40C34.4772 140 30 135.523 30 130V70C30 64.4772 34.4772 60 40 60Z" fill="transparent" stroke="#FFFFFF" stroke-width="5"/>
 
     <text x="100" y="94" font-family="Arial, sans-serif" font-size="28" font-weight="bold" fill="#FFFFFF" text-anchor="middle">ATS</text>
 

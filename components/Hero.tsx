@@ -7,7 +7,7 @@ interface PageType {
 }
 const Hero = ({ pageType }: PageType) => {
   return (
-    <div className="flex flex-col gap-4 max-w-4xl">
+    <div className="flex flex-col gap-4 max-w-5xl">
       <h1 className="text-4xl sm:text-5xl font-extrabold text-center sm:text-left">
         Optimize your job search with
         <span className="text-gray-600"> Resume analyzer app</span>
