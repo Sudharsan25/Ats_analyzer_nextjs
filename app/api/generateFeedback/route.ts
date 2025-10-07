@@ -2,21 +2,52 @@ import { generateText } from "ai";
 import { NextResponse } from "next/server";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { auth } from "@/lib/auth";
+import { slidingWindow } from "@arcjet/next";
+import { arcjet } from "@/lib/arcjet";
 
 const google = createGoogleGenerativeAI({
   apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY!,
 });
 
 export async function POST(request: Request) {
-  try {
-    const session = await auth.api.getSession({
-      headers: request.headers,
-    });
+  const session = await auth.api.getSession({
+    headers: request.headers,
+  });
+  const userId = session?.user?.id;
 
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const aj = arcjet.withRule(
+    slidingWindow({ mode: "LIVE", max: 10, interval: "1d" })
+  );
+
+  // Request a decision from Arcjet with the user's ID as a fingerprint
+  const decision = await aj.protect(request, { fingerprint: userId });
+
+  // If the decision is denied then return an error response
+  if (decision.isDenied()) {
+    if (decision.reason.isRateLimit()) {
+      console.warn("Rate limit exceeded for user:", userId);
+
+      // Send a user-friendly, custom error message to the client
+      return NextResponse.json(
+        {
+          error:
+            "This is a BETA version using free tiers, so your quota is limited to 10 requests per day. Please try again tomorrow.",
+        },
+        { status: 429 } // "Too Many Requests"
+      );
+    } else {
+      return NextResponse.json(
+        { error: "Suspicious Activity Detected", reason: decision.reason },
+        { status: 403 }
+      );
     }
+  }
 
+  try {
     const { jobDescription, resumePath } = await request.json();
 
     // Step 1 & 2: Fetch the file and get its buffer
