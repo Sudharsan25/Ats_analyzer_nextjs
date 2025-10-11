@@ -22,7 +22,7 @@ import { toast } from "sonner";
 
 // Imports for the new spinner component
 import { Item, ItemContent, ItemMedia, ItemTitle } from "@/components/ui/item";
-import { Spinner } from "@/components/ui/spinner";
+import Image from "next/image";
 
 const formSchema = z.object({
   jobTitle: z.string().min(2, "Job title must be at least 2 characters long"),
@@ -118,7 +118,7 @@ const ResumeUploadForm = () => {
       await handleAnalyze(data.jobDescription, data.resumePath, newResumeId);
 
       toast.success("Your resume has been uploaded and analyzed successfully!");
-      router.push("/");
+      router.push(`/resume/${newResumeId}`);
     } catch (error) {
       console.error("An error occurred during the submission process:", error);
       toast.error("The submission process failed. Please try again.");
@@ -172,13 +172,25 @@ const ResumeUploadForm = () => {
   if (isAnalyzing) {
     return (
       <div className="flex w-full min-h-screen flex-col items-center justify-center gap-4 [--radius:1rem]">
-        <Item variant="muted">
+        <Item
+          variant="muted"
+          className="flex flex-col items-center justify-center">
           <ItemMedia>
-            <Spinner />
+            <Image
+              src="/images/resume-scan-2.gif"
+              alt="Analyzing"
+              width={96}
+              height={96}
+              unoptimized
+            />
           </ItemMedia>
           <ItemContent>
-            <ItemTitle className="line-clamp-1 text-white">
-              Performing AI analysis...
+            <ItemTitle className=" text-white text-lg text-center">
+              Your resume has been successfully uploaded and is now being
+              analyzed.
+              <br />
+              Please wait while we generate your feedback. This may take a
+              moment.
             </ItemTitle>
           </ItemContent>
         </Item>

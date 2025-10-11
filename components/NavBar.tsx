@@ -75,13 +75,13 @@ const NavBar = () => {
   };
 
   return (
-    <nav className="w-full h-16 flex justify-between bg-black sticky text-white shadow-2xl mt-4">
+    <nav className="w-full h-fit flex justify-between bg-black sticky top-0 z-50  text-white shadow-2xl mt-4">
       <div className="flex gap-4 items-center px-4">
         <Link href="/" className="p-4">
           <Image src="/logo.svg" alt="Logo" width={120} height={90} />
         </Link>
       </div>
-      <div className="px-8 py-5">
+      <div className="px-12 py-12">
         <DropdownMenu>
           <DropdownMenuTrigger className="cursor-pointer">
             <User />

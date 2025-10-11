@@ -117,7 +117,7 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-[url("/images/bg-main.svg")] bg-cover text-foreground overflow-y-scroll overflow-x-hidden;
+    @apply bg-[url("/images/bg-main.svg")] bg-scroll text-foreground overflow-y-scroll overflow-x-hidden;
   }
 }
 

@@ -1,13 +1,13 @@
 <svg width="200" height="150" viewBox="0 0 200 150" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M40 60H160C165.523 60 170 64.4772 170 70V130C170 135.523 165.523 140 160 140H40C34.4772 140 30 135.523 30 130V70C30 64.4772 34.4772 60 40 60Z" fill="transparent" stroke="#FFFFFF" stroke-width="5"/>
+  <path d="M40 30H160C165.523 30 170 34.4772 170 40V100C170 105.523 165.523 110 160 110H40C34.4772 110 30 105.523 30 100V40C30 34.4772 34.4772 30 40 30Z" fill="transparent" stroke="#FFFFFF" stroke-width="5"/>
 
-    <text x="100" y="94" font-family="Arial, sans-serif" font-size="28" font-weight="bold" fill="#FFFFFF" text-anchor="middle">ATS</text>
+  <text x="100" y="64" font-family="Arial, sans-serif" font-size="28" font-weight="bold" fill="#FFFFFF" text-anchor="middle">ATS</text>
 
-    <path d="M60 115L80 100L100 115L120 100L140 115" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M60 85L80 70L100 85L120 70L140 85" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
 
-    <circle cx="60" cy="115" r="4" fill="#FFFFFF"/>
-    <circle cx="80" cy="100" r="4" fill="#FFFFFF"/>
-    <circle cx="100" cy="115" r="4" fill="#FFFFFF"/>
-    <circle cx="120" cy="100" r="4" fill="#FFFFFF"/>
-    <circle cx="140" cy="115" r="4" fill="#FFFFFF"/>
+  <circle cx="60" cy="85" r="4" fill="#FFFFFF"/>
+  <circle cx="80" cy="70" r="4" fill="#FFFFFF"/>
+  <circle cx="100" cy="85" r="4" fill="#FFFFFF"/>
+  <circle cx="120" cy="70" r="4" fill="#FFFFFF"/>
+  <circle cx="140" cy="85" r="4" fill="#FFFFFF"/>
 </svg>
