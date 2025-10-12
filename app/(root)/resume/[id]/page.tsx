@@ -1,19 +1,15 @@
-// app/resumes/[id]/page.tsx
-"use client"; // 1. This page must be a Client Component to fetch its own data.
+"use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation"; // 2. Import hook to get URL parameters.
+import { useParams } from "next/navigation";
 import { IResume } from "@/database/resumes";
 import { Feedback } from "@/types";
 import Image from "next/image";
-import Link from "next/link";
 import Summary from "@/components/Summary";
 import ATS from "@/components/ATS";
 import Details from "@/components/Details";
-// 3. Import your shared Mongoose interface for type safety.
 
 export default function ResumeDetailPage() {
-  // 4. State variables to manage the component's lifecycle.
   const [resume, setResume] = useState<IResume | null>(null);
   const [imageUrl, setImageUrl] = useState("");
   const [resumeUrl, setResumeUrl] = useState("");
@@ -21,13 +17,11 @@ export default function ResumeDetailPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // 5. Get the dynamic 'id' parameter from the URL.
   const params = useParams();
   const id = params.id as string;
 
-  // 6. useEffect hook to fetch data when the component first renders.
   useEffect(() => {
-    if (!id) return; // Don't fetch if the ID isn't available yet.
+    if (!id) return;
 
     const fetchResume = async () => {
       try {
@@ -41,9 +35,8 @@ export default function ResumeDetailPage() {
           );
         }
 
-        // 7. Cast the JSON response to your IResume interface for type safety.
+        // Cast the JSON response to your IResume interface for type safety.
         const data = (await response.json()) as IResume;
-        console.log("Fetched resume data:", data);
         setResume(data);
         setImageUrl(data.imagePath || "");
         setResumeUrl(data.resumePath || "");
@@ -56,9 +49,8 @@ export default function ResumeDetailPage() {
     };
 
     fetchResume();
-  }, [id]); // The dependency array ensures this runs if the id changes.
+  }, [id]);
 
-  // 8. Render UI based on the current state (loading, error, or success).
   if (isLoading) {
     return (
       <div className="p-20">

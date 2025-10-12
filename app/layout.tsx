@@ -15,9 +15,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Resume Analyzer App",
+  title: "Free AI Resume Scanner & ATS Checker | Optimize for Any Job",
   description:
-    "Calculate ATS score for your resume with respect to specific job descriptions",
+    "Get an instant ATS score for your resume. Our AI-powered analyzer checks your resume against any job description to help you improve keywords, formatting, and land more interviews.",
 };
 
 export default function RootLayout({

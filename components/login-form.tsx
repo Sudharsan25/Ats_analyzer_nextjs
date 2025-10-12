@@ -45,9 +45,6 @@ export function LoginForm({
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setloading(true);
     const { success, message } = await signIn(values.email, values.password);
-
-    console.log(success, message);
-
     if (success == true) {
       toast.success(message);
       router.push("/");

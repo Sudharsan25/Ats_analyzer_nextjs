@@ -19,8 +19,6 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-
-// Imports for the new spinner component
 import { Item, ItemContent, ItemMedia, ItemTitle } from "@/components/ui/item";
 import Image from "next/image";
 
@@ -38,7 +36,6 @@ const ResumeUploadForm = () => {
   const [file, setFile] = useState<File | null>(null);
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  // New state to track the AI analysis phase
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -57,7 +54,6 @@ const ResumeUploadForm = () => {
     }
 
     setIsSubmitting(true);
-    console.log("Submitting form with values:", values);
     try {
       const formData = new FormData();
       formData.append("file", file);
@@ -66,7 +62,7 @@ const ResumeUploadForm = () => {
         process.env.NEXT_PUBLIC_CLODUINARY_UPLOAD_PRESET!
       );
 
-      // 2. Upload the file directly to Cloudinary
+      // Upload the file directly to Cloudinary
       const cloudinaryResponse = await fetch(
         `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/upload`,
         {
@@ -80,12 +76,11 @@ const ResumeUploadForm = () => {
       }
 
       const cloudinaryData = await cloudinaryResponse.json();
-      const resumePath = cloudinaryData.secure_url; // The URL of the uploaded PDF
+      const resumePath = cloudinaryData.secure_url;
 
-      // 3. Automatically generate the image URL by changing the file extension
+      // Automatically generate the image URL by changing the file extension
       const imagePath = resumePath.replace(/\.pdf$/, ".jpg");
 
-      console.log("File uploaded to Cloudinary:", { resumePath, imagePath });
       const data = {
         jobTitle: values.jobTitle,
         companyName: values.companyName,
@@ -95,8 +90,7 @@ const ResumeUploadForm = () => {
         feedback: null,
       };
 
-      console.log("Data created for DB entry:", data);
-      // Step 2: Create the resume record in the database
+      // Create the resume record in the database
       const createResponse = await fetch("/api/resumes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -107,14 +101,12 @@ const ResumeUploadForm = () => {
         throw new Error("Failed to create resume record.");
       }
       const newResume = await createResponse.json();
-      const newResumeId = newResume._id; // Using the transformed 'id'
+      const newResumeId = newResume._id;
 
-      console.log("New resume created with ID:", newResumeId);
-      // Step 3: Switch from "submitting" to "analyzing" state
       setIsSubmitting(false);
       setIsAnalyzing(true);
 
-      // Step 4: Trigger the AI analysis and final DB update
+      // Trigger the AI analysis and final DB update
       await handleAnalyze(data.jobDescription, data.resumePath, newResumeId);
 
       toast.success("Your resume has been uploaded and analyzed successfully!");
@@ -134,8 +126,6 @@ const ResumeUploadForm = () => {
     resumePath: string,
     id: string
   ) => {
-    console.log("Starting AI analysis for resume ID:", id);
-    // This function's internal logic remains the same
     const feedbackResponse = await fetch("/api/generateFeedback", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -168,7 +158,6 @@ const ResumeUploadForm = () => {
     setFile(fileSelected);
   };
 
-  // Conditionally render the spinner when analysis is in progress
   if (isAnalyzing) {
     return (
       <div className="flex w-full min-h-screen flex-col items-center justify-center gap-4 [--radius:1rem]">
